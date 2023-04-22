@@ -25,13 +25,11 @@ Input input_data()
     return in;
 }
 
-int main()
+void find_minmax(const std::vector<double>& numbers, double &min, double &max)
 {
-    Input in = input_data();
-    std::vector<size_t> bins(in.bin_count);
-    double min = in.numbers[0];
-    double max = in.numbers[0];
-    for (double x : in.numbers)
+    min = numbers[0];
+    max = numbers[0];
+    for (double x : numbers)
     {
         if (x < min)
         {
@@ -42,7 +40,14 @@ int main()
             max = x;
         }
     }
+}
 
+int main()
+{
+    Input in = input_data();
+    std::vector<size_t> bins(in.bin_count);
+    double min, max;
+    find_minmax(in.numbers, min, max);
     double bin_size = (max - min) / in.bin_count;
 
     for (size_t i = 0; i < in.numbers.size(); i++)
