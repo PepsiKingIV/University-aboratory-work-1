@@ -25,7 +25,7 @@ Input input_data()
     return in;
 }
 
-void find_minmax(const std::vector<double>& numbers, double &min, double &max)
+void find_minmax(const std::vector<double> &numbers, double &min, double &max)
 {
     min = numbers[0];
     max = numbers[0];
@@ -42,22 +42,22 @@ void find_minmax(const std::vector<double>& numbers, double &min, double &max)
     }
 }
 
-int main()
+std::vector<size_t> make_histogram(const std::vector<double> &numbers, const size_t &bin_count)
 {
-    Input in = input_data();
-    std::vector<size_t> bins(in.bin_count);
     double min, max;
-    find_minmax(in.numbers, min, max);
-    double bin_size = (max - min) / in.bin_count;
+    find_minmax(numbers, min, max);
 
-    for (size_t i = 0; i < in.numbers.size(); i++)
+    std::vector<size_t> bins(bin_count);
+    double bin_size = (max - min) / bin_count;
+
+    for (size_t i = 0; i < numbers.size(); i++)
     {
         bool found = false;
-        for (size_t j = 0; (j < in.bin_count - 1) && !found; j++)
+        for (size_t j = 0; (j < bin_count - 1) && !found; j++)
         {
             auto lo = min + j * bin_size;
             auto hi = min + (j + 1) * bin_size;
-            if ((lo <= in.numbers[i]) && (in.numbers[i] < hi))
+            if ((lo <= numbers[i]) && (numbers[i] <= hi))
             {
                 bins[j]++;
                 found = true;
@@ -65,10 +65,14 @@ int main()
         }
         if (!found)
         {
-            bins[in.bin_count - 1]++;
+            bins[bin_count - 1]++;
         }
     }
+    return bins;
+}
 
+void show_histogram_text(const std::vector<size_t> &bins, const std::vector<double> &numbers)
+{
     const size_t SCREEN_WIDTH = 80;
     const size_t MAX_ASTERISK = SCREEN_WIDTH - 5;
     size_t max_count = 0;
@@ -90,13 +94,13 @@ int main()
             height = MAX_ASTERISK * (static_cast<double>(bin) / max_count);
         }
 
-        int fraction = bin * 100 / in.numbers.size();
+        int fraction = bin * 100 / numbers.size();
 
         if (fraction < 100)
             std::cout << ' ';
         if (fraction < 10)
             std::cout << ' ';
-        std::cout << fraction << "%|";
+        std::cout << fraction << "|";
 
         for (size_t j = 0; j < height; j++)
         {
@@ -104,6 +108,12 @@ int main()
         }
         std::cout << std::endl;
     }
+}
 
+int main()
+{
+    Input in = input_data();
+    auto bins = make_histogram(in.numbers, in.bin_count);
+    show_histogram_text(bins, in.numbers);
     return 0;
 }
