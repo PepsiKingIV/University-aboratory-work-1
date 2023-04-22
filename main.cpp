@@ -1,25 +1,37 @@
 #include <iostream>
 #include <vector>
 
-int main()
+struct Input
+{
+    std::vector<double> numbers;
+    size_t bin_count;
+};
+
+Input input_data()
 {
     size_t number_count;
     std::cerr << "Enter number count: ";
     std::cin >> number_count;
-    std::vector<double> numbers(number_count);
+    Input in;
+    in.numbers.resize(number_count);
 
     for (size_t i = 0; i < number_count; i++)
     {
-        std::cin >> numbers[i];
+        std::cin >> in.numbers[i];
     }
 
-    size_t bin_count;
     std::cerr << "Enter bin count: ";
-    std::cin >> bin_count;
-    std::vector<size_t> bins(bin_count);
-    double min = numbers[0];
-    double max = numbers[0];
-    for (double x : numbers)
+    std::cin >> in.bin_count;
+    return in;
+}
+
+int main()
+{
+    Input in = input_data();
+    std::vector<size_t> bins(in.bin_count);
+    double min = in.numbers[0];
+    double max = in.numbers[0];
+    for (double x : in.numbers)
     {
         if (x < min)
         {
@@ -31,16 +43,16 @@ int main()
         }
     }
 
-    double bin_size = (max - min) / bin_count;
+    double bin_size = (max - min) / in.bin_count;
 
-    for (size_t i = 0; i < number_count; i++)
+    for (size_t i = 0; i < in.numbers.size(); i++)
     {
         bool found = false;
-        for (size_t j = 0; (j < bin_count - 1) && !found; j++)
+        for (size_t j = 0; (j < in.bin_count - 1) && !found; j++)
         {
             auto lo = min + j * bin_size;
             auto hi = min + (j + 1) * bin_size;
-            if ((lo <= numbers[i]) && (numbers[i] < hi))
+            if ((lo <= in.numbers[i]) && (in.numbers[i] < hi))
             {
                 bins[j]++;
                 found = true;
@@ -48,7 +60,7 @@ int main()
         }
         if (!found)
         {
-            bins[bin_count - 1]++;
+            bins[in.bin_count - 1]++;
         }
     }
 
@@ -73,8 +85,8 @@ int main()
             height = MAX_ASTERISK * (static_cast<double>(bin) / max_count);
         }
 
-        int fraction = bin * 100 / number_count;
-        
+        int fraction = bin * 100 / in.numbers.size();
+
         if (fraction < 100)
             std::cout << ' ';
         if (fraction < 10)
