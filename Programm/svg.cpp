@@ -23,7 +23,7 @@ void svg_text(double left, double baseline, std::string text)
 
 void svg_rect(double x, double y, double width, double height, std::string stroke = "black", std::string fill = "black")
 {
-    std::cout << "<rect x='" << x << "' y='" << y << "' width='" << width 
+    std::cout << "<rect x='" << x << "' y='" << y << "' width='" << width
               << "' height='" << height << "' stroke='" << stroke << "' fill='" << fill << " '/>";
 }
 
@@ -45,13 +45,25 @@ void show_histogram_svg(const std::vector<size_t> &bins)
         if (bin > max_count)
             max_count = bin;
     }
-    const auto BLOCK_WIDTH = (IMAGE_WIDTH - TEXT_WIDTH) / max_count;
+    const auto BLOCK_WIDTH = (IMAGE_WIDTH - TEXT_WIDTH * 2 - TEXT_LEFT) / max_count;
+    const auto TEXT_RATIO_SHIFT = IMAGE_WIDTH - TEXT_WIDTH;
+    auto summ = 0;
+    for (size_t bin : bins)
+    {
+        summ += bin;
+    }
 
     for (size_t bin : bins)
     {
         const double bin_width = BLOCK_WIDTH * bin;
         svg_text(TEXT_LEFT, top + TEXT_BASELINE, std::to_string(bin));
         svg_rect(TEXT_WIDTH, top, bin_width, BIN_HEIGHT, "blue", "#aaffaa");
+        auto ratio = (bin * 100) / summ;
+        if (bin == bins.back() && summ % 2 != 0)
+        {
+            ratio ++;
+        }
+        svg_text(TEXT_RATIO_SHIFT, top + TEXT_BASELINE, (std::to_string(ratio) + "%"));
         top += BIN_HEIGHT;
     }
     // svg_text(20, 20, std::to_string(bins[0]));

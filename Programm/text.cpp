@@ -4,7 +4,7 @@ void show_histogram_text(const std::vector<size_t> &bins, const std::vector<doub
 {
 
     const size_t SCREEN_WIDTH = 80;
-    const size_t MAX_ASTERISK = SCREEN_WIDTH - 5;
+    const size_t MAX_ASTERISK = SCREEN_WIDTH - 8;
     size_t max_count = 0;
     for (auto bin : bins)
     {
